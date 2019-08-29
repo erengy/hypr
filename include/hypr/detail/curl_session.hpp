@@ -31,7 +31,7 @@ public:
   // https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html
   template <typename T>
   CURLcode getinfo(CURLINFO info, T& arg) const {
-    return curl_easy_getinfo(handle_, info, arg);
+    return curl_easy_getinfo(handle_, info, &arg);
   }
 
   // https://curl.haxx.se/libcurl/c/curl_easy_setopt.html

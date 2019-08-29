@@ -115,10 +115,16 @@ private:
   }
 
   void build_response(const Session& session, Response& response) const {
+    // Last used URL
     char* url = nullptr;
-    session.getinfo(CURLINFO_EFFECTIVE_URL, &url);
-    if (url) {
+    if (session.getinfo(CURLINFO_EFFECTIVE_URL, url) == CURLE_OK && url) {
       response.effective_url = url;
+    }
+
+    // Last received response code
+    long code = 0;
+    if (session.getinfo(CURLINFO_RESPONSE_CODE, code) == CURLE_OK && code) {
+      response.start_line.code = code;
     }
   }
 };
