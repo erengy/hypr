@@ -63,7 +63,7 @@ private:
     CURLcode code = CURLE_OK;
 
     #define HYPR_CURL_SETOPT(option, value) \
-        if ((code = curl_easy_setopt(session.handle(), option, value)) != CURLE_OK) return code;
+        if ((code = session.setopt(option, value)) != CURLE_OK) return code;
 
     // Callback options
 
@@ -112,7 +112,7 @@ private:
 
   void build_response(const Session& session, Response& response) const {
     char* url = nullptr;
-    curl_easy_getinfo(session.handle(), CURLINFO_EFFECTIVE_URL, &url);
+    session.getinfo(CURLINFO_EFFECTIVE_URL, &url);
     if (url) {
       response.effective_url = url;
     }
