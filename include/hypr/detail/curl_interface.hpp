@@ -92,6 +92,13 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_FOLLOWLOCATION, options.allow_redirects ? 1L : 0L);
     HYPR_CURL_SETOPT(CURLOPT_MAXREDIRS, options.max_redirects);
 
+    if (request.start_line.method == hypp::method::kPost) {
+      session.post_data = request.body;
+      HYPR_CURL_SETOPT(CURLOPT_POST, 1L);
+      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDS, session.post_data.c_str());
+      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE, session.post_data.size());
+    }
+
     HYPR_CURL_SETOPT(CURLOPT_USERAGENT, get_default_user_agent().c_str());
 
     build_header_list(request, session.header_list);

@@ -55,6 +55,7 @@ public:
   }
 
   Slist header_list;
+  std::string post_data;
 
 private:
   CURL* handle_ = nullptr;
