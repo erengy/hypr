@@ -46,16 +46,12 @@ private:
     return default_user_agent;
   }
 
-  Slist build_header_list(const hypr::Request& request) const {
-    Slist list;
-
+  static void build_header_list(const hypr::Request& request, Slist& list) {
     for (const auto& field : request.header.fields) {
       list.append(!field.value.empty() ?
           field.name + ": " + field.value :
           field.name + ";");
     }
-
-    return std::move(list);
   }
 
   CURLcode build_session(const hypr::Request& request,
@@ -98,7 +94,7 @@ private:
 
     HYPR_CURL_SETOPT(CURLOPT_USERAGENT, get_default_user_agent().c_str());
 
-    session.header_list = build_header_list(request);
+    build_header_list(request, session.header_list);
     HYPR_CURL_SETOPT(CURLOPT_HTTPHEADER, session.header_list.get());
 
     HYPR_CURL_SETOPT(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
