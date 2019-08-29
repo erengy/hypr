@@ -1,0 +1,42 @@
+#pragma once
+
+#include <string_view>
+
+#include <hypp/parser/response.hpp>
+
+#include <hypr/models.hpp>
+
+namespace hypr::detail::curl {
+
+size_t header_callback(char* buffer, size_t size, size_t nitems,
+                       void* userdata) {
+  const std::string_view data{buffer, size * nitems};
+
+  if (userdata && !data.empty()) {
+    auto& response = *static_cast<Response*>(userdata);
+    if (data._Starts_with("HTTP/")) {
+      hypp::Parser parser{data};
+      const auto expected = hypp::ParseStatusLine(parser);
+      response.start_line = std::move(expected.value());
+    } else if (data != "\r\n") {
+      hypp::Parser parser{data};
+      const auto expected = hypp::ParseHeaderField(parser);
+      response.header.fields.push_back(std::move(expected.value()));
+    }
+  }
+
+  return data.size();
+}
+
+size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) {
+  const std::string_view data{ptr, size * nmemb};
+
+  if (userdata && !data.empty()) {
+    auto& response = *static_cast<Response*>(userdata);
+    response.body.append(data);
+  }
+
+  return data.size();
+}
+
+}  // namespace hypr::detail::curl
