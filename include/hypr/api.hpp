@@ -21,4 +21,9 @@ Response get(const std::string_view url, const Ts&... args) {
   return request(hypp::method::kGet, url, args...);
 }
 
+template <typename... Ts>
+Response post(const std::string_view url, const Ts&... args) {
+  return request(hypp::method::kPost, url, args...);
+}
+
 }  // namespace hypr
