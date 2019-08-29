@@ -2,6 +2,7 @@
 
 #include <string_view>
 
+#include <curl/curl.h>
 #include <hypp/parser/response.hpp>
 
 #include <hypr/models.hpp>
@@ -26,6 +27,12 @@ size_t header_callback(char* buffer, size_t size, size_t nitems,
   }
 
   return data.size();
+}
+
+int progress_callback(void* clientp,
+                      curl_off_t dltotal, curl_off_t dlnow,
+                      curl_off_t ultotal, curl_off_t ulnow) {
+  return 0;
 }
 
 size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) {
