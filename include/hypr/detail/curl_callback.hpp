@@ -9,6 +9,25 @@
 
 namespace hypr::detail::curl {
 
+int debug_callback(CURL* handle, curl_infotype type, char* data, size_t size,
+                   void* userptr) {
+  const std::string_view str{data, size};
+
+  switch (type) {
+    case CURLINFO_TEXT:
+    case CURLINFO_HEADER_IN:
+    case CURLINFO_HEADER_OUT:
+    case CURLINFO_DATA_IN:
+    case CURLINFO_DATA_OUT:
+    case CURLINFO_SSL_DATA_OUT:
+    case CURLINFO_SSL_DATA_IN:
+      // @TODO
+      break;
+  }
+
+  return 0;
+}
+
 size_t header_callback(char* buffer, size_t size, size_t nitems,
                        void* userdata) {
   const std::string_view data{buffer, size * nitems};

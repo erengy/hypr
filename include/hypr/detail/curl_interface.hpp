@@ -79,6 +79,9 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_WRITEFUNCTION, write_callback);
     HYPR_CURL_SETOPT(CURLOPT_WRITEDATA, &response);
 
+    HYPR_CURL_SETOPT(CURLOPT_DEBUGFUNCTION, debug_callback);
+    HYPR_CURL_SETOPT(CURLOPT_DEBUGDATA, nullptr);
+
     // Network options
 
     const auto url = hypp::to_string(request.start_line.target);
