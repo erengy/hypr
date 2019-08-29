@@ -39,8 +39,10 @@ public:
 
 private:
   static std::string get_default_user_agent() {
-    static const std::string default_user_agent =
-        "hypr/0.1 " + std::string{curl_version()};
+    static const auto default_user_agent = std::string{"hypr/0.1 libcurl/"} +
+        std::to_string(LIBCURL_VERSION_MAJOR) + "." +
+        std::to_string(LIBCURL_VERSION_MINOR) + "." +
+        std::to_string(LIBCURL_VERSION_PATCH);
     return default_user_agent;
   }
 
