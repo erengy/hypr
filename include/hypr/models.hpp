@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 
+#include <hypp/detail/uri.hpp>
 #include <hypp/header.hpp>
 #include <hypp/method.hpp>
 #include <hypp/request.hpp>
@@ -29,6 +30,35 @@ public:
       : hypp::Header{fields} {}
 };
 
+class Params {
+private:
+  struct Param {
+    std::string key;
+    std::string value;
+  };
+
+  std::vector<Param> params_;
+
+public:
+  Params() = default;
+  Params(const std::initializer_list<Param>& params) : params_{params} {}
+
+  bool empty() const {
+    return params_.empty();
+  }
+
+  std::string to_string() const {
+    std::string str;
+    for (const auto& [key, value] : params_) {
+      if (!str.empty()) {
+        str.push_back('&');
+      }
+      str += key + '=' + hypp::detail::uri::encode(value);
+    }
+    return str;
+  }
+};
+
 class Request {
 public:
   const std::string_view method() const {
@@ -43,6 +73,13 @@ public:
   }
   void set_url(const Url& url) {
     request_.start_line.target.uri = url;
+  }
+  void set_url_params(const Params& params) {
+    if (!params.empty()) {
+      request_.start_line.target.uri.query = params.to_string();
+    } else {
+      request_.start_line.target.uri.query.reset();
+    }
   }
 
   const auto& headers() const {

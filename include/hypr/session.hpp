@@ -49,6 +49,10 @@ private:
     request.set_headers(header);
   }
 
+  void set_option(const Params& params, Request& request) {
+    request.set_url_params(params);
+  }
+
   detail::curl::Interface interface_;
 };
 
