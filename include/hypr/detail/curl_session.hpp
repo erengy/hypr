@@ -50,12 +50,7 @@ public:
     curl_easy_reset(handle_);
   }
 
-  CURL* handle() const {
-    return handle_;
-  }
-
   Slist header_list;
-  std::string post_data;
 
 private:
   CURL* handle_ = nullptr;
