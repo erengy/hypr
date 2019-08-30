@@ -29,7 +29,42 @@ public:
       : hypp::Header{fields} {}
 };
 
-using Request = hypp::Request;
+class Request {
+public:
+  const std::string_view method() const {
+    return request_.start_line.method;
+  }
+  void set_method(const std::string_view method) {
+    request_.start_line.method = method;
+  }
+
+  const Url url() const {
+    return request_.start_line.target.uri;
+  }
+  void set_url(const Url& url) {
+    request_.start_line.target.uri = url;
+  }
+
+  const auto& headers() const {
+    return request_.header.fields;
+  }
+  void set_headers(const Header& headers) {
+    request_.header = headers;
+  }
+  void set_headers(const std::initializer_list<Header::Field>& headers) {
+    request_.header = hypp::Header{headers};
+  }
+
+  const std::string_view content() const {
+    return request_.body;
+  }
+  void set_content(const std::string_view content) {
+    request_.body = content;
+  }
+
+private:
+  hypp::Request request_;
+};
 
 class Response : public hypp::Response {
 public:

@@ -21,7 +21,7 @@ public:
     {
       hypp::Parser parser{method};
       if (const auto expected = hypp::ParseMethod(parser)) {
-        request.start_line.method = expected.value();
+        request.set_method(expected.value());
       } else {
         // @TODO: Error: Invalid method
       }
@@ -30,7 +30,7 @@ public:
     {
       hypp::Parser parser{url};
       if (const auto expected = hypp::ParseRequestTarget(parser)) {
-        request.start_line.target = expected.value();
+        request.set_url(expected.value().uri);
       } else {
         // @TODO: Error: Invalid URL
       }
@@ -46,7 +46,7 @@ public:
 
 private:
   void set_option(const Header& header, Request& request) {
-    request.header = header;
+    request.set_headers(header);
   }
 
   detail::curl::Interface interface_;
