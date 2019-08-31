@@ -45,8 +45,8 @@ public:
   Options options;
 
 private:
-  void set_option(const Header& header, Request& request) {
-    request.set_headers(header);
+  void set_option(const Headers& headers, Request& request) {
+    request.set_headers(headers);
   }
 
   void set_option(const Params& params, Request& request) {

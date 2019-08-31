@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <map>
 #include <string>
 #include <string_view>
 
@@ -11,6 +12,8 @@
 #include <hypp/response.hpp>
 #include <hypp/status.hpp>
 #include <hypp/uri.hpp>
+
+#include <hypr/detail/util.hpp>
 
 namespace hypr {
 
@@ -24,11 +27,8 @@ struct Options {
 using Code = hypp::status::code_t;
 using Url = hypp::Uri;
 
-class Header : public hypp::Header {
-public:
-  Header(const std::initializer_list<Field>& fields)
-      : hypp::Header{fields} {}
-};
+using Headers = std::multimap<std::string, std::string,
+    detail::CaseInsensitiveCompare>;
 
 class Params {
 private:
@@ -85,11 +85,11 @@ public:
   const auto& headers() const {
     return request_.header.fields;
   }
-  void set_headers(const Header& headers) {
-    request_.header = headers;
-  }
-  void set_headers(const std::initializer_list<Header::Field>& headers) {
-    request_.header = hypp::Header{headers};
+  void set_headers(const Headers& headers) {
+    request_.header.fields.clear();
+    for (const auto& [name, value] : headers) {
+      request_.header.fields.push_back({name, value});
+    }
   }
 
   const std::string_view content() const {
