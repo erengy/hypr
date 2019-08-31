@@ -16,7 +16,7 @@
 namespace hypr::detail::curl {
 
 #define HYPR_CURL_SETOPT(option, arg) \
-    if ((code = session.setopt(option, arg)) != CURLE_OK) return code
+    if (auto code = session.setopt(option, arg); code != CURLE_OK) return code
 
 class Interface {
 public:
@@ -25,18 +25,19 @@ public:
     return global.init() == CURLE_OK;
   }
 
-  Response send(const hypr::Request& request, const hypr::Options& options) const {
+  Response send(const hypr::Request& request,
+                const hypr::Options& options) const {
     Response response;
 
     // @TODO: Handle errors
     Session session;
     session.init();
-    build_session(response, session);
-    build_session(options, session);
-    build_session(request, session);
+    prepare_session(response, session);
+    prepare_session(options, session);
+    prepare_session(request, session);
     session.perform();  // blocks
 
-    build_response(session, response);
+    prepare_response(session, response);
 
     return response;
   }
@@ -50,9 +51,7 @@ private:
     return default_user_agent;
   }
 
-  CURLcode build_session(const Response& response, Session& session) const {
-    CURLcode code = CURLE_OK;
-
+  CURLcode prepare_session(const Response& response, Session& session) const {
     // Behavior options
     session.setopt(CURLOPT_VERBOSE, 1L);
     session.setopt(CURLOPT_NOPROGRESS, 0L);
@@ -78,12 +77,11 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_USERAGENT, get_default_user_agent().c_str());
     HYPR_CURL_SETOPT(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 
-    return code;
+    return CURLE_OK;
   }
 
-  CURLcode build_session(const hypr::Options& options, Session& session) const {
-    CURLcode code = CURLE_OK;
-
+  CURLcode prepare_session(const hypr::Options& options,
+                           Session& session) const {
     HYPR_CURL_SETOPT(CURLOPT_FOLLOWLOCATION, options.allow_redirects);
     HYPR_CURL_SETOPT(CURLOPT_MAXREDIRS,
         std::max(static_cast<long>(options.max_redirects), -1L));
@@ -92,12 +90,11 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYHOST, options.verify_certificate);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYPEER, options.verify_certificate);
 
-    return code;
+    return CURLE_OK;
   }
 
-  CURLcode build_session(const hypr::Request& request, Session& session) const {
-    CURLcode code = CURLE_OK;
-
+  CURLcode prepare_session(const hypr::Request& request,
+                           Session& session) const {
     if (request.method() == hypp::method::kGet) {
       HYPR_CURL_SETOPT(CURLOPT_HTTPGET, 1L);
     } else if (request.method() == hypp::method::kPost) {
@@ -117,10 +114,10 @@ private:
     }
     HYPR_CURL_SETOPT(CURLOPT_HTTPHEADER, session.header_list.get());
 
-    return code;
+    return CURLE_OK;
   }
 
-  void build_response(const Session& session, Response& response) const {
+  void prepare_response(const Session& session, Response& response) const {
     // Last used URL
     char* url = nullptr;
     if (session.getinfo(CURLINFO_EFFECTIVE_URL, url) == CURLE_OK && url) {
