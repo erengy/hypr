@@ -87,7 +87,8 @@ private:
         std::max(static_cast<long>(options.max_redirects), -1L));
     HYPR_CURL_SETOPT(CURLOPT_CONNECTTIMEOUT,
         std::max(static_cast<long>(options.timeout.count()), 0L));
-    HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYHOST, options.verify_certificate);
+    HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYHOST,
+        options.verify_certificate ? 2L : 0L);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYPEER, options.verify_certificate);
 
     return CURLE_OK;
