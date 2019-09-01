@@ -2,9 +2,6 @@
 
 #include <string_view>
 
-#include <hypp/parser/method.hpp>
-#include <hypp/parser/request.hpp>
-
 #include <hypr/detail/curl_interface.hpp>
 #include <hypr/models.hpp>
 
@@ -18,23 +15,8 @@ public:
                    const Ts&... args) {
     Request request;
 
-    {
-      hypp::Parser parser{method};
-      if (const auto expected = hypp::ParseMethod(parser)) {
-        request.set_method(expected.value());
-      } else {
-        // @TODO: Error: Invalid method
-      }
-    }
-
-    {
-      hypp::Parser parser{url};
-      if (const auto expected = hypp::ParseRequestTarget(parser)) {
-        request.set_url(expected.value().uri);
-      } else {
-        // @TODO: Error: Invalid URL
-      }
-    }
+    request.set_method(method);
+    request.set_url(url);
 
     (set_option(args, request), ...);
 
