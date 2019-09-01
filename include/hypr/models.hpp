@@ -13,6 +13,7 @@
 #include <hypp/status.hpp>
 #include <hypp/uri.hpp>
 
+#include <hypr/detail/models.hpp>
 #include <hypr/detail/util.hpp>
 
 namespace hypr {
@@ -24,7 +25,7 @@ struct Options {
   bool verify_certificate = true;
 };
 
-using Code = hypp::status::code_t;
+using StatusCode = hypp::status::code_t;
 using Url = hypp::Uri;
 
 using Headers = std::multimap<std::string, std::string,
@@ -103,9 +104,33 @@ private:
   hypp::Request request_;
 };
 
-class Response : public hypp::Response {
+class Response {
 public:
-  std::string effective_url;
+  Response() = default;
+  Response(detail::Response&& response) : response_{response} {}
+
+  StatusCode status_code() const {
+    return response_.start_line.code;
+  }
+
+  std::string_view reason_phrase() const {
+    return hypp::status::to_phrase(response_.start_line.code);
+  }
+
+  std::string_view url() const {
+    return response_.url;
+  }
+
+  const auto& headers() const {
+    return response_.header.fields;
+  }
+
+  std::string_view text() const {
+    return response_.body;
+  }
+
+private:
+  detail::Response response_;
 };
 
 }  // namespace hypr

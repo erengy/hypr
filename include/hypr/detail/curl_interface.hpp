@@ -11,6 +11,7 @@
 #include <hypr/detail/curl_callback.hpp>
 #include <hypr/detail/curl_global.hpp>
 #include <hypr/detail/curl_session.hpp>
+#include <hypr/detail/models.hpp>
 #include <hypr/models.hpp>
 
 namespace hypr::detail::curl {
@@ -25,9 +26,9 @@ public:
     return global.init() == CURLE_OK;
   }
 
-  Response send(const hypr::Request& request,
-                const hypr::Options& options) const {
-    Response response;
+  hypr::Response send(const hypr::Request& request,
+                      const hypr::Options& options) const {
+    hypr::detail::Response response;
 
     // @TODO: Handle errors
     Session session;
@@ -39,7 +40,7 @@ public:
 
     prepare_response(session, response);
 
-    return response;
+    return hypr::Response(std::move(response));
   }
 
 private:
@@ -51,7 +52,8 @@ private:
     return default_user_agent;
   }
 
-  CURLcode prepare_session(const Response& response, Session& session) const {
+  CURLcode prepare_session(const hypr::detail::Response& response,
+                           Session& session) const {
     // Behavior options
     session.setopt(CURLOPT_VERBOSE, 1L);
     session.setopt(CURLOPT_NOPROGRESS, 0L);
@@ -118,11 +120,12 @@ private:
     return CURLE_OK;
   }
 
-  void prepare_response(const Session& session, Response& response) const {
+  void prepare_response(const Session& session,
+                        hypr::detail::Response& response) const {
     // Last used URL
     char* url = nullptr;
     if (session.getinfo(CURLINFO_EFFECTIVE_URL, url) == CURLE_OK && url) {
-      response.effective_url = url;
+      response.url = url;
     }
 
     // Last received response code

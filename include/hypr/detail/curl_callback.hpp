@@ -7,7 +7,7 @@
 #include <hypp/parser/header.hpp>
 #include <hypp/parser/response.hpp>
 
-#include <hypr/models.hpp>
+#include <hypr/detail/models.hpp>
 
 namespace hypr::detail::curl {
 
@@ -35,7 +35,7 @@ size_t header_callback(char* buffer, size_t size, size_t nitems,
   const std::string_view line{buffer, size * nitems};
 
   if (userdata && !line.empty()) {
-    auto& response = *static_cast<hypr::Response*>(userdata);
+    auto& response = *static_cast<hypr::detail::Response*>(userdata);
 
     const auto parse_status_line = [&line]() {
       hypp::Parser parser{line};
@@ -72,7 +72,7 @@ size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) {
   const std::string_view data{ptr, size * nmemb};
 
   if (userdata && !data.empty()) {
-    auto& response = *static_cast<hypr::Response*>(userdata);
+    auto& response = *static_cast<hypr::detail::Response*>(userdata);
     response.body.append(data);
   }
 
