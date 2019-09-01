@@ -65,7 +65,7 @@ public:
     return request_.start_line.method;
   }
   void set_method(const std::string_view method) {
-    request_.start_line.method = method;
+    request_.start_line.method = detail::to_upper_string(std::string{method});
   }
 
   const Url url() const {
