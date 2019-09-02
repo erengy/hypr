@@ -24,6 +24,7 @@ struct Options {
   bool allow_redirects = true;
   int max_redirects = 30;
   std::chrono::seconds timeout{60};
+  bool verbose = false;
   bool verify_certificate = true;
 };
 

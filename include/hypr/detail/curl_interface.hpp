@@ -55,7 +55,6 @@ private:
   CURLcode prepare_session(const hypr::detail::Response& response,
                            Session& session) const {
     // Behavior options
-    session.setopt(CURLOPT_VERBOSE, 1L);
     session.setopt(CURLOPT_NOPROGRESS, 0L);
 
     // Callback options
@@ -89,6 +88,7 @@ private:
         std::max(static_cast<long>(options.max_redirects), -1L));
     HYPR_CURL_SETOPT(CURLOPT_CONNECTTIMEOUT,
         std::max(static_cast<long>(options.timeout.count()), 0L));
+    HYPR_CURL_SETOPT(CURLOPT_VERBOSE, options.verbose);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYHOST,
         options.verify_certificate ? 2L : 0L);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYPEER, options.verify_certificate);
