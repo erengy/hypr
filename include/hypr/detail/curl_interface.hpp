@@ -122,6 +122,11 @@ private:
 
   void prepare_response(const Session& session,
                         hypr::detail::Response& response) const {
+    for (auto&& [name, value] : response.header.fields) {
+      response.headers.emplace(std::move(name), std::move(value));
+    }
+    response.header.fields.clear();
+
     // Last used URL
     char* url = nullptr;
     if (session.getinfo(CURLINFO_EFFECTIVE_URL, url) == CURLE_OK && url) {

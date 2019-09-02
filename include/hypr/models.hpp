@@ -1,7 +1,6 @@
 #pragma once
 
 #include <chrono>
-#include <map>
 #include <string>
 #include <string_view>
 
@@ -32,8 +31,7 @@ using StatusCode = hypp::status::code_t;
 using Url = hypp::Uri;
 using Body = std::string_view;
 
-using Headers = std::multimap<std::string, std::string,
-    detail::CaseInsensitiveCompare>;
+using Headers = detail::Headers;
 
 class Params {
 private:
@@ -136,8 +134,12 @@ public:
     return response_.url;
   }
 
-  const auto& headers() const {
-    return response_.header.fields;
+  std::string_view header(const std::string_view name) const {
+    const auto it = response_.headers.find(std::string{name});
+    return it != response_.headers.end() ? it->second : std::string_view{};
+  }
+  const Headers& headers() const {
+    return response_.headers;
   }
 
   std::string_view body() const {
