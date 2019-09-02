@@ -35,6 +35,10 @@ private:
     request.set_url_params(params);
   }
 
+  void set_option(const Body& body, Request& request) {
+    request.set_body(body);
+  }
+
   detail::curl::Interface interface_;
 };
 

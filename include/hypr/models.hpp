@@ -30,6 +30,7 @@ struct Options {
 
 using StatusCode = hypp::status::code_t;
 using Url = hypp::Uri;
+using Body = std::string_view;
 
 using Headers = std::multimap<std::string, std::string,
     detail::CaseInsensitiveCompare>;
@@ -107,11 +108,11 @@ public:
     }
   }
 
-  const std::string_view content() const {
+  const std::string_view body() const {
     return request_.body;
   }
-  void set_content(const std::string_view content) {
-    request_.body = content;
+  void set_body(const std::string_view body) {
+    request_.body = body;
   }
 
 private:
@@ -139,7 +140,7 @@ public:
     return response_.header.fields;
   }
 
-  std::string_view text() const {
+  std::string_view body() const {
     return response_.body;
   }
 

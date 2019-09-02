@@ -102,8 +102,8 @@ private:
       HYPR_CURL_SETOPT(CURLOPT_HTTPGET, 1L);
     } else if (request.method() == hypp::method::kPost) {
       HYPR_CURL_SETOPT(CURLOPT_POST, 1L);
-      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDS, request.content().data());
-      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE, request.content().size());
+      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDS, request.body().data());
+      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE, request.body().size());
     } else {
       HYPR_CURL_SETOPT(CURLOPT_CUSTOMREQUEST, request.method().data());
     }
