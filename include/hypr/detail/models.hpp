@@ -8,6 +8,7 @@
 namespace hypr::detail {
 
 struct Response : public hypp::Response {
+  std::chrono::microseconds elapsed{0};
   std::string url;
 };
 

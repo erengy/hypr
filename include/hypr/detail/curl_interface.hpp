@@ -133,6 +133,12 @@ private:
     if (session.getinfo(CURLINFO_RESPONSE_CODE, code) == CURLE_OK && code) {
       response.start_line.code = code;
     }
+
+    // Total time of previous transfer
+    curl_off_t total = 0;
+    if (session.getinfo(CURLINFO_TOTAL_TIME_T, total) == CURLE_OK && total) {
+      response.elapsed = std::chrono::microseconds{total};
+    }
   }
 };
 

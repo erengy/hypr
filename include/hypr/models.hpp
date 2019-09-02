@@ -143,6 +143,10 @@ public:
     return response_.body;
   }
 
+  std::chrono::microseconds elapsed() const {
+    return response_.elapsed;
+  }
+
 private:
   detail::Response response_;
 };
