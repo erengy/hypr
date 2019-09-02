@@ -11,11 +11,11 @@ hypr is an HTTP client library for C++. Provides an interface similar to [Reques
 #include <hypr.hpp>
 
 int main() {
-  const auto r = hypr::get("http://example.com");
+  const auto r = hypr::get("https://example.com");
 
-  std::cout << r.status_code() << '\n';            // 200
-  std::cout << r.headers["Content-Type"] << '\n';  // text/html
-  std::cout << r.content().substr(0, 15) << '\n';  // <!doctype html>
+  std::cout << r.status_code() << '\n';           // 200
+  std::cout << r.header("content-type") << '\n';  // text/html; charset=UTF-8
+  std::cout << r.body().substr(0, 15) << '\n';    // <!doctype html>
 
   return 0;
 }
@@ -26,7 +26,7 @@ int main() {
 #include <hypr.hpp>
 
 int main() {
-  const auto r = hypr::request("GET", "http://example.com",
+  const auto r = hypr::request("GET", "https://example.com",
       hypr::Headers{
         {"Referer", "https://github.com/erengy/hypr/"},
         {"User-Agent", "hypr/0.1"},
@@ -37,7 +37,7 @@ int main() {
       }
     );
 
-  std::cout << r.url() << '\n';  // http://example.com/?key1=value1&key2=value2
+  std::cout << r.url() << '\n';  // https://example.com/?key1=value1&key2=value2
 
   return 0;
 }
