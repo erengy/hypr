@@ -53,7 +53,18 @@ size_t header_callback(char* buffer, size_t size, size_t nitems,
     } else if (const auto expected = parse_header_field()) {
       response.header.fields.emplace_back(std::move(expected.value()));
 
-    } else if (line != hypp::detail::syntax::kCRLF) {
+    } else if (line == hypp::detail::syntax::kCRLF) {
+      if (response.body.empty() && response.session) {
+        curl_off_t content_length = 0;
+        if (response.session->getinfo(CURLINFO_CONTENT_LENGTH_DOWNLOAD_T,
+                                      content_length) == CURLE_OK) {
+          if (content_length > 0) {
+            response.body.reserve(static_cast<size_t>(content_length));
+          }
+        }
+      }
+
+    } else {
       // @TODO: Handle error
     }
   }

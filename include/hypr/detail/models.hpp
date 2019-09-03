@@ -8,6 +8,7 @@
 #include <hypp/response.hpp>
 
 #include <hypr/detail/curl_error.hpp>
+#include <hypr/detail/curl_session.hpp>
 #include <hypr/detail/util.hpp>
 
 namespace hypr::detail {
@@ -24,6 +25,8 @@ public:
   Headers headers;
   std::chrono::microseconds elapsed{0};
   std::string url;
+
+  curl::Session* session = nullptr;
 };
 
 }  // namespace hypr::detail
