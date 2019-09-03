@@ -19,6 +19,11 @@
 
 namespace hypr {
 
+using Body = std::string_view;
+using Headers = detail::Headers;
+using StatusCode = hypp::status::code_t;
+using Url = hypp::Uri;
+
 struct Options {
   bool allow_redirects = true;
   int max_redirects = 30;
@@ -26,12 +31,6 @@ struct Options {
   bool verbose = false;
   bool verify_certificate = true;
 };
-
-using StatusCode = hypp::status::code_t;
-using Url = hypp::Uri;
-using Body = std::string_view;
-
-using Headers = detail::Headers;
 
 class Params {
 private:
