@@ -24,6 +24,10 @@ public:
     return interface_.send(request, options);
   }
 
+  Response send(const Request& request) {
+    return interface_.send(request, options);
+  }
+
   Options options;
 
 private:
