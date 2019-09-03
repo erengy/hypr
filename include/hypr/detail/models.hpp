@@ -4,8 +4,10 @@
 #include <map>
 #include <string>
 
+#include <curl/curl.h>
 #include <hypp/response.hpp>
 
+#include <hypr/detail/curl_error.hpp>
 #include <hypr/detail/util.hpp>
 
 namespace hypr::detail {
@@ -13,7 +15,12 @@ namespace hypr::detail {
 using Headers = std::map<std::string, std::string,
     detail::CaseInsensitiveCompare>;
 
-struct Response : public hypp::Response {
+class Response : public hypp::Response {
+public:
+  Response() = default;
+  Response(const CURLcode code) : error{code} {}
+
+  curl::Error error;
   Headers headers;
   std::chrono::microseconds elapsed{0};
   std::string url;

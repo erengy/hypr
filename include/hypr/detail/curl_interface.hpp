@@ -16,6 +16,8 @@
 
 namespace hypr::detail::curl {
 
+#define HYPR_CURL_CHECK_OK(arg) \
+    if (auto code = arg; code != CURLE_OK) return hypr::Response(code)
 #define HYPR_CURL_SETOPT(option, arg) \
     if (auto code = session.setopt(option, arg); code != CURLE_OK) return code
 
@@ -30,13 +32,12 @@ public:
                       const hypr::Options& options) const {
     hypr::detail::Response response;
 
-    // @TODO: Handle errors
     Session session;
-    session.init();
-    prepare_session(response, session);
-    prepare_session(options, session);
-    prepare_session(request, session);
-    session.perform();  // blocks
+    HYPR_CURL_CHECK_OK(session.init() ? CURLE_OK : CURLE_FAILED_INIT);
+    HYPR_CURL_CHECK_OK(prepare_session(response, session));
+    HYPR_CURL_CHECK_OK(prepare_session(options, session));
+    HYPR_CURL_CHECK_OK(prepare_session(request, session));
+    HYPR_CURL_CHECK_OK(session.perform());  // blocks
 
     prepare_response(session, response);
 
@@ -147,6 +148,7 @@ private:
   }
 };
 
+#undef HYPR_CURL_CHECK_OK
 #undef HYPR_CURL_SETOPT
 
 }  // namespace hypr::detail::curl

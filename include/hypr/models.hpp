@@ -67,25 +67,27 @@ public:
   const std::string_view method() const {
     return request_.start_line.method;
   }
-  void set_method(const std::string_view method) {
+  bool set_method(const std::string_view method) {
     hypp::Parser parser{method};
     if (const auto expected = hypp::ParseMethod(parser)) {
       request_.start_line.method =
           detail::to_upper_string(std::string{expected.value()});
+      return true;
     } else {
-      // @TODO: Error: Invalid method
+      return false;
     }
   }
 
   const Url url() const {
     return request_.start_line.target.uri;
   }
-  void set_url(const std::string_view url) {
+  bool set_url(const std::string_view url) {
     hypp::Parser parser{url};
     if (const auto expected = hypp::ParseRequestTarget(parser)) {
       request_.start_line.target = expected.value();
+      return true;
     } else {
-      // @TODO: Error: Invalid request target
+      return false;
     }
   }
   void set_url_params(const Params& params) {
@@ -148,6 +150,10 @@ public:
 
   std::chrono::microseconds elapsed() const {
     return response_.elapsed;
+  }
+
+  const detail::curl::Error& error() const {
+    return response_.error;
   }
 
 private:

@@ -13,6 +13,10 @@ public:
     return curl_easy_strerror(code);
   }
 
+  operator bool() const {
+    return code != CURLE_OK;
+  }
+
   // https://curl.haxx.se/libcurl/c/libcurl-errors.html
   CURLcode code = CURLE_OK;
 };
