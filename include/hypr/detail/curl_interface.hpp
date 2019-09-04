@@ -113,10 +113,9 @@ private:
 
     HYPR_CURL_SETOPT(CURLOPT_URL, hypp::to_string(request.url()).c_str());
 
-    for (const auto& field : request.headers()) {
-      session.header_list.append(!field.value.empty() ?
-          field.name + ": " + field.value :
-          field.name + ";");
+    for (const auto& [name, value] : request.headers()) {
+      session.header_list.append(
+          !value.empty() ? name + ": " + value : name + ";");
     }
     HYPR_CURL_SETOPT(CURLOPT_HTTPHEADER, session.header_list.get());
 

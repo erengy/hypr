@@ -22,6 +22,11 @@ using Headers = std::map<std::string, std::string,
 using Param = hypp::Header::Field;
 using Params = std::vector<Param>;
 
+class Request : public hypp::Request {
+public:
+  Headers headers;
+};
+
 class Response : public hypp::Response {
 public:
   Response() = default;

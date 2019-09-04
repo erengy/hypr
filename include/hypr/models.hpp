@@ -85,8 +85,8 @@ public:
   }
   bool set_url(const std::string_view url) {
     hypp::Parser parser{url};
-    if (const auto expected = hypp::ParseRequestTarget(parser)) {
-      request_.start_line.target = expected.value();
+    if (auto expected = hypp::ParseRequestTarget(parser)) {
+      request_.start_line.target = std::move(expected.value());
       return true;
     } else {
       return false;
@@ -100,14 +100,25 @@ public:
     }
   }
 
-  const auto& headers() const {
-    return request_.header.fields;
+  std::string_view header(const std::string_view name) const {
+    const auto it = request_.headers.find(std::string{name});
+    return it != request_.headers.end() ? it->second : std::string_view{};
+  }
+  const Headers& headers() const {
+    return request_.headers;
+  }
+  void add_header(const std::string_view name, const std::string_view value) {
+    auto& header_value = request_.headers[std::string{name}];
+    if (header_value.empty()) {
+      header_value.append(", ");
+    }
+    header_value.append(value);
+  }
+  void set_header(const std::string_view name, const std::string_view value) {
+    request_.headers[std::string{name}] = value;
   }
   void set_headers(const Headers& headers) {
-    request_.header.fields.clear();
-    for (const auto& [name, value] : headers) {
-      request_.header.fields.push_back({name, value});
-    }
+    request_.headers = headers;
   }
 
   const std::string_view body() const {
@@ -118,7 +129,7 @@ public:
   }
 
 private:
-  hypp::Request request_;
+  detail::Request request_;
 };
 
 class Response {
