@@ -18,7 +18,6 @@
 
 namespace hypr {
 
-using Body = std::string_view;
 using Headers = detail::Headers;
 using StatusCode = hypp::status::code_t;
 using Url = hypp::Uri;
@@ -47,6 +46,22 @@ public:
 
 private:
   detail::Params params_;
+};
+
+class Body {
+public:
+  Body() = default;
+  Body(const std::string_view str) : body_{str} {}
+  Body(const std::initializer_list<detail::Param>& params) {
+    body_ = detail::to_string(params);
+  }
+
+  std::string_view to_string() const {
+    return body_;
+  }
+
+private:
+  std::string body_;
 };
 
 class Request {
@@ -98,8 +113,8 @@ public:
   const std::string_view body() const {
     return request_.body;
   }
-  void set_body(const std::string_view body) {
-    request_.body = body;
+  void set_body(const Body& body) {
+    request_.body = body.to_string();
   }
 
 private:
