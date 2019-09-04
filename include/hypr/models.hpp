@@ -4,7 +4,6 @@
 #include <string>
 #include <string_view>
 
-#include <hypp/detail/uri.hpp>
 #include <hypp/parser/method.hpp>
 #include <hypp/parser/request.hpp>
 #include <hypp/header.hpp>
@@ -33,32 +32,21 @@ struct Options {
 };
 
 class Params {
-private:
-  struct Param {
-    std::string key;
-    std::string value;
-  };
-
-  std::vector<Param> params_;
-
 public:
   Params() = default;
-  Params(const std::initializer_list<Param>& params) : params_{params} {}
+  Params(const std::initializer_list<detail::Param>& params)
+      : params_{params} {}
 
   bool empty() const {
     return params_.empty();
   }
 
   std::string to_string() const {
-    std::string str;
-    for (const auto& [key, value] : params_) {
-      if (!str.empty()) {
-        str.push_back('&');
-      }
-      str += key + '=' + hypp::detail::uri::encode(value);
-    }
-    return str;
+    return detail::to_string(params_);
   }
+
+private:
+  detail::Params params_;
 };
 
 class Request {
