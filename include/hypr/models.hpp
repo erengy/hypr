@@ -92,6 +92,9 @@ public:
     }
   }
 
+  const auto target() const {
+    return request_.start_line.target;
+  }
   const Url url() const {
     return request_.start_line.target.uri;
   }
