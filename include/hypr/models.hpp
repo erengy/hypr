@@ -50,10 +50,21 @@ private:
 
 class Body {
 public:
+  enum class Type {
+    application_x_www_form_urlencoded,
+    text_plain,
+  };
+
   Body() = default;
-  Body(const std::string_view str) : body_{str} {}
-  Body(const std::initializer_list<detail::Param>& params) {
+  Body(const std::string_view str)
+      : body_{str}, type_{Type::text_plain} {}
+  Body(const std::initializer_list<detail::Param>& params)
+      : type_{Type::application_x_www_form_urlencoded} {
     body_ = detail::to_string(params);
+  }
+
+  Type content_type() const {
+    return type_;
   }
 
   std::string_view to_string() const {
@@ -62,6 +73,7 @@ public:
 
 private:
   std::string body_;
+  Type type_ = Type::text_plain;
 };
 
 class Request {
