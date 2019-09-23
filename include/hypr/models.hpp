@@ -121,7 +121,7 @@ public:
   }
   void add_header(const std::string_view name, const std::string_view value) {
     auto& header_value = request_.headers[std::string{name}];
-    if (header_value.empty()) {
+    if (!header_value.empty()) {
       header_value.append(", ");
     }
     header_value.append(value);
