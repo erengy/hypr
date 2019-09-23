@@ -48,10 +48,10 @@ size_t header_callback(char* buffer, size_t size, size_t nitems,
 
     if (const auto expected = parse_status_line()) {
       response.start_line = std::move(expected.value());
-      response.header.fields.clear();
+      response.header_fields.clear();
 
     } else if (const auto expected = parse_header_field()) {
-      response.header.fields.emplace_back(std::move(expected.value()));
+      response.header_fields.emplace_back(std::move(expected.value()));
 
     } else if (line == hypp::detail::syntax::kCRLF) {
       if (response.body.empty() && response.session) {

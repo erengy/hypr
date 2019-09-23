@@ -19,7 +19,7 @@ namespace hypr::detail {
 using Headers = std::map<std::string, std::string,
     detail::CaseInsensitiveCompare>;
 
-using Param = hypp::Header::Field;
+using Param = hypp::HeaderField;
 using Params = std::vector<Param>;
 
 class Request : public hypp::Request {

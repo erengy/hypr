@@ -124,10 +124,10 @@ private:
 
   void prepare_response(const Session& session,
                         hypr::detail::Response& response) const {
-    for (auto&& [name, value] : response.header.fields) {
+    for (auto&& [name, value] : response.header_fields) {
       response.headers.emplace(std::move(name), std::move(value));
     }
-    response.header.fields.clear();
+    response.header_fields.clear();
 
     // Last used URL
     char* url = nullptr;
