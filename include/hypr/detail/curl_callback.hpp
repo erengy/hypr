@@ -11,8 +11,8 @@
 
 namespace hypr::detail::curl {
 
-int debug_callback(CURL* handle, curl_infotype type, char* data, size_t size,
-                   void* userptr) {
+inline int debug_callback(CURL* handle, curl_infotype type, char* data,
+                          size_t size, void* userptr) {
   const std::string_view str{data, size};
 
   switch (type) {
@@ -30,8 +30,8 @@ int debug_callback(CURL* handle, curl_infotype type, char* data, size_t size,
   return 0;
 }
 
-size_t header_callback(char* buffer, size_t size, size_t nitems,
-                       void* userdata) {
+inline size_t header_callback(char* buffer, size_t size, size_t nitems,
+                              void* userdata) {
   const std::string_view line{buffer, size * nitems};
 
   if (userdata && !line.empty()) {
@@ -72,14 +72,15 @@ size_t header_callback(char* buffer, size_t size, size_t nitems,
   return line.size();
 }
 
-int progress_callback(void* clientp,
-                      curl_off_t dltotal, curl_off_t dlnow,
-                      curl_off_t ultotal, curl_off_t ulnow) {
+inline int progress_callback(void* clientp,
+                             curl_off_t dltotal, curl_off_t dlnow,
+                             curl_off_t ultotal, curl_off_t ulnow) {
   // @TODO
   return 0;
 }
 
-size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) {
+inline size_t write_callback(char* ptr, size_t size, size_t nmemb,
+                             void* userdata) {
   const std::string_view data{ptr, size * nmemb};
 
   if (userdata && !data.empty()) {
