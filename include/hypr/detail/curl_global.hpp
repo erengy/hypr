@@ -11,9 +11,11 @@ public:
   }
 
   // https://curl.haxx.se/libcurl/c/curl_global_init.html
-  CURLcode init() {
-    code_ = curl_global_init(CURL_GLOBAL_ALL);
-    return code_;
+  bool init() {
+    if (!initialized()) {
+      code_ = curl_global_init(CURL_GLOBAL_ALL);
+    }
+    return initialized();
   }
 
   // https://curl.haxx.se/libcurl/c/curl_global_cleanup.html

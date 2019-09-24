@@ -35,6 +35,7 @@ public:
     hypr::detail::Response response;
     response.session = &session;
 
+    HYPR_CURL_CHECK_OK(init() ? CURLE_OK : CURLE_FAILED_INIT);
     HYPR_CURL_CHECK_OK(session.init() ? CURLE_OK : CURLE_FAILED_INIT);
     HYPR_CURL_CHECK_OK(prepare_session(response, session));
     HYPR_CURL_CHECK_OK(prepare_session(options, session));
