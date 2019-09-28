@@ -96,11 +96,8 @@ public:
   const auto target() const {
     return request_.start_line.target;
   }
-  const Url url() const {
-    return request_.start_line.target.uri;
-  }
-  bool set_url(const std::string_view url) {
-    hypp::Parser parser{url};
+  bool set_target(const std::string_view target) {
+    hypp::Parser parser{target};
     if (auto expected = hypp::ParseRequestTarget(parser)) {
       request_.start_line.target = std::move(expected.value());
       return true;

@@ -11,12 +11,12 @@ class Session {
 public:
   template <typename... Ts>
   Response request(const std::string_view method,
-                   const std::string_view url,
+                   const std::string_view target,
                    const Ts&... args) {
     Request request;
 
     request.set_method(method);
-    request.set_url(url);
+    request.set_target(target);
 
     (set_option(args, request), ...);
 
