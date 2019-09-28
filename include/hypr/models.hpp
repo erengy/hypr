@@ -139,6 +139,17 @@ public:
   }
   void set_body(const Body& body) {
     request_.body = body.to_string();
+
+    if (header("content-type").empty()) {
+      switch (body.content_type()) {
+        case Body::Type::application_x_www_form_urlencoded:
+          set_header("Content-Type", "application/x-www-form-urlencoded");
+          break;
+        case Body::Type::text_plain:
+          set_header("Content-Type", "text/plain");
+          break;
+      }
+    }
   }
 
 private:

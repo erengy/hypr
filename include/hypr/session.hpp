@@ -41,18 +41,6 @@ private:
 
   void set_option(const Body& body, Request& request) {
     request.set_body(body);
-
-    if (request.header("content-type").empty()) {
-      switch (body.content_type()) {
-        case Body::Type::application_x_www_form_urlencoded:
-          request.set_header(
-              "Content-Type", "application/x-www-form-urlencoded");
-          break;
-        case Body::Type::text_plain:
-          request.set_header("Content-Type", "text/plain");
-          break;
-      }
-    }
   }
 
   detail::curl::Interface interface_;
