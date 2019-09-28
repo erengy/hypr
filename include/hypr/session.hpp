@@ -35,8 +35,8 @@ private:
     request.set_headers(headers);
   }
 
-  void set_option(const Params& params, Request& request) {
-    request.set_url_params(params);
+  void set_option(const Query& params, Request& request) {
+    request.set_url_query(params);
   }
 
   void set_option(const Body& body, Request& request) {

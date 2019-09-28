@@ -30,22 +30,24 @@ struct Options {
   bool verify_certificate = true;
 };
 
-class Params {
+class Query {
 public:
-  Params() = default;
-  Params(const std::initializer_list<detail::Param>& params)
-      : params_{params} {}
+  Query() = default;
+  Query(const std::string_view str)
+      : query_{hypp::detail::uri::encode(str)} {}
+  Query(const std::initializer_list<detail::Param>& params)
+      : query_{detail::to_string(params)} {}
 
   bool empty() const {
-    return params_.empty();
+    return query_.empty();
   }
 
-  std::string to_string() const {
-    return detail::to_string(params_);
+  std::string_view to_string() const {
+    return query_;
   }
 
 private:
-  detail::Params params_;
+  std::string query_;
 };
 
 class Body {
@@ -59,9 +61,8 @@ public:
   Body(const std::string_view str)
       : body_{str}, type_{Type::text_plain} {}
   Body(const std::initializer_list<detail::Param>& params)
-      : type_{Type::application_x_www_form_urlencoded} {
-    body_ = detail::to_string(params);
-  }
+      : body_{detail::to_string(params)},
+        type_{Type::application_x_www_form_urlencoded} {}
 
   Type content_type() const {
     return type_;
@@ -107,9 +108,9 @@ public:
       return false;
     }
   }
-  void set_url_params(const Params& params) {
-    if (!params.empty()) {
-      request_.start_line.target.uri.query = params.to_string();
+  void set_url_query(const Query& query) {
+    if (!query.empty()) {
+      request_.start_line.target.uri.query = query.to_string();
     } else {
       request_.start_line.target.uri.query.reset();
     }
