@@ -105,7 +105,8 @@ public:
       return false;
     }
   }
-  void set_url_query(const Query& query) {
+
+  void set_query(const Query& query) {
     if (!query.empty()) {
       request_.start_line.target.uri.query = query.to_string();
     } else {

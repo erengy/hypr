@@ -36,7 +36,7 @@ private:
   }
 
   void set_option(const Query& params, Request& request) {
-    request.set_url_query(params);
+    request.set_query(params);
   }
 
   void set_option(const Body& body, Request& request) {
