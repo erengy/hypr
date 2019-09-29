@@ -23,13 +23,15 @@ namespace hypr::detail::curl {
 
 class Interface {
 public:
-  bool init() const {
+  Interface() = delete;
+
+  static bool init() {
     static Global global;
-    return global.init() == CURLE_OK;
+    return global.init();
   }
 
-  hypr::Response send(const hypr::Request& request,
-                      const hypr::Options& options) const {
+  static hypr::Response send(const hypr::Request& request,
+                             const hypr::Options& options) {
     Session session;
 
     hypr::detail::Response response;
@@ -56,8 +58,8 @@ private:
     return default_user_agent;
   }
 
-  CURLcode prepare_session(const hypr::detail::Response& response,
-                           Session& session) const {
+  static CURLcode prepare_session(const hypr::detail::Response& response,
+                                  Session& session) {
     // Behavior options
     session.setopt(CURLOPT_NOPROGRESS, 0L);
 
@@ -85,8 +87,8 @@ private:
     return CURLE_OK;
   }
 
-  CURLcode prepare_session(const hypr::Options& options,
-                           Session& session) const {
+  static CURLcode prepare_session(const hypr::Options& options,
+                                  Session& session) {
     HYPR_CURL_SETOPT(CURLOPT_FOLLOWLOCATION, options.allow_redirects);
     HYPR_CURL_SETOPT(CURLOPT_MAXREDIRS,
         std::max(static_cast<long>(options.max_redirects), -1L));
@@ -100,8 +102,8 @@ private:
     return CURLE_OK;
   }
 
-  CURLcode prepare_session(const hypr::Request& request,
-                           Session& session) const {
+  static CURLcode prepare_session(const hypr::Request& request,
+                                  Session& session) {
     if (request.method() == hypp::method::kGet) {
       HYPR_CURL_SETOPT(CURLOPT_HTTPGET, 1L);
     } else if (request.method() == hypp::method::kPost) {
@@ -110,6 +112,7 @@ private:
       HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE, request.body().size());
     } else {
       HYPR_CURL_SETOPT(CURLOPT_CUSTOMREQUEST, request.method().data());
+      // @TODO: Send body if appropriate
     }
 
     HYPR_CURL_SETOPT(CURLOPT_URL, hypp::to_string(request.target()).c_str());
@@ -124,8 +127,8 @@ private:
     return CURLE_OK;
   }
 
-  void prepare_response(const Session& session,
-                        hypr::detail::Response& response) const {
+  static void prepare_response(const Session& session,
+                               hypr::detail::Response& response) {
     for (auto&& [name, value] : response.header_fields) {
       response.headers.emplace(std::move(name), std::move(value));
     }

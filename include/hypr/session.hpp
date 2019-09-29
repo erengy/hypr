@@ -20,12 +20,11 @@ public:
 
     (set_option(args, request), ...);
 
-    interface_.init();
-    return interface_.send(request, options);
+    return send(request);
   }
 
   Response send(const Request& request) {
-    return interface_.send(request, options);
+    return detail::curl::Interface::send(request, options);
   }
 
   Options options;
@@ -42,8 +41,6 @@ private:
   void set_option(const Body& body, Request& request) {
     request.set_body(body);
   }
-
-  detail::curl::Interface interface_;
 };
 
 }  // namespace hypr
