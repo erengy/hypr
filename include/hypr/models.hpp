@@ -52,20 +52,15 @@ private:
 
 class Body {
 public:
-  enum class Type {
-    application_x_www_form_urlencoded,
-    text_plain,
-  };
-
   Body() = default;
   Body(const std::string_view str)
-      : body_{str}, type_{Type::text_plain} {}
+      : body_{str}, media_type_{"text/plain"} {}
   Body(const std::initializer_list<detail::Param>& params)
       : body_{detail::to_string(params)},
-        type_{Type::application_x_www_form_urlencoded} {}
+        media_type_{"application/x-www-form-urlencoded"} {}
 
-  Type content_type() const {
-    return type_;
+  std::string_view media_type() const {
+    return media_type_;
   }
 
   std::string_view to_string() const {
@@ -74,7 +69,7 @@ public:
 
 private:
   std::string body_;
-  Type type_ = Type::text_plain;
+  std::string media_type_;
 };
 
 class Request {
@@ -144,16 +139,8 @@ public:
   }
   void set_body(const Body& body) {
     request_.body = body.to_string();
-
-    if (header("content-type").empty()) {
-      switch (body.content_type()) {
-        case Body::Type::application_x_www_form_urlencoded:
-          set_header("Content-Type", "application/x-www-form-urlencoded");
-          break;
-        case Body::Type::text_plain:
-          set_header("Content-Type", "text/plain");
-          break;
-      }
+    if (header("content-type").empty() && !body.media_type().empty()) {
+      set_header("Content-Type", body.media_type());
     }
   }
 
