@@ -79,6 +79,10 @@ private:
 
 class Request {
 public:
+  Request() {
+    request_.start_line.method = hypp::method::kGet;
+  }
+
   const std::string_view method() const {
     return request_.start_line.method;
   }
