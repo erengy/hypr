@@ -1,6 +1,6 @@
 # hypr
 
-hypr is an HTTP client library for C++. Provides an interface similar to [Requests](https://2.python-requests.org). Uses [hypp](https://github.com/erengy/hypp/) and [libcurl](https://curl.haxx.se) under the hood.
+hypr is an HTTP client library for C++. Provides an interface similar to [Requests](https://requests.readthedocs.io/). Uses [hypp](https://github.com/erengy/hypp/) and [libcurl](https://curl.haxx.se/) under the hood.
 
 ## Usage
 
@@ -21,25 +21,46 @@ int main() {
 }
 ```
 
+### Advanced Usage
+
 ```cpp
-#include <iostream>
-#include <hypr.hpp>
+const auto r = hypr::request("POST", "https://httpbin.org/post",
+    // Optional parameters can be given in any order
+    hypr::Query{{"a", "1"}, {"b", "2"}},
+    hypr::Headers{
+      {"Content-Type", "text/plain"},
+      {"Referer", "https://github.com/erengy/hypr/"},
+    },
+    hypr::Body{"My body is ready."});
 
-int main() {
-  const auto r = hypr::request("GET", "https://example.com",
-      hypr::Headers{
-        {"Referer", "https://github.com/erengy/hypr/"},
-        {"User-Agent", "hypr/0.1"},
-      },
-      hypr::Params{
-        {"key1", "value1"},
-        {"key2", "value2"},
-      }
-    );
+std::cout << r.url() << '\n';  // https://httpbin.org/post?a=1&b=2
+```
 
-  std::cout << r.url() << '\n';  // https://example.com/?key1=value1&key2=value2
+```cpp
+// Requests can be built explicitly
+hypr::Request request;
+request.set_method("POST");
+request.set_url("https://httpbin.org/post");
+request.set_query({{"a", "1"}, {"b", "2"}});
+request.set_headers({
+    {"Content-Type", "text/plain"},
+    {"Referer", "https://github.com/erengy/hypr/"}});
+request.set_body("My body is ready.");
 
-  return 0;
+// Sessions can be reused
+hypr::Session session;
+const auto r = session.send(request);
+```
+
+### Error Handling
+
+```cpp
+// FTP is not supported, so we will get an error
+const auto r = hypr::get("ftp://example.com");
+
+if (r.error()) {
+  std::cout << "Error: " << r.error().str() << '\n';  // Unsupported protocol
+  return r.error().code;  // CURLE_UNSUPPORTED_PROTOCOL
 }
 ```
 
