@@ -31,7 +31,8 @@ public:
   }
 
   static hypr::Response send(const hypr::Request& request,
-                             const hypr::Options& options) {
+                             const hypr::Options& options,
+                             const hypr::Proxy& proxy) {
     Session session;
 
     hypr::detail::Response response;
@@ -41,6 +42,7 @@ public:
     HYPR_CURL_CHECK_OK(session.init() ? CURLE_OK : CURLE_FAILED_INIT);
     HYPR_CURL_CHECK_OK(prepare_session(response, session));
     HYPR_CURL_CHECK_OK(prepare_session(options, session));
+    HYPR_CURL_CHECK_OK(prepare_session(proxy, session));
     HYPR_CURL_CHECK_OK(prepare_session(request, session));
     HYPR_CURL_CHECK_OK(session.perform());  // blocks
 
@@ -98,6 +100,18 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYHOST,
         options.verify_certificate ? 2L : 0L);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYPEER, options.verify_certificate);
+
+    return CURLE_OK;
+  }
+
+  static CURLcode prepare_session(const hypr::Proxy& proxy, Session& session) {
+    const auto get_value = [](const std::string& value) {
+      return !value.empty() ? value.c_str() : nullptr;
+    };
+
+    HYPR_CURL_SETOPT(CURLOPT_PROXY, get_value(proxy.host));
+    HYPR_CURL_SETOPT(CURLOPT_PROXYUSERNAME, get_value(proxy.username));
+    HYPR_CURL_SETOPT(CURLOPT_PROXYPASSWORD, get_value(proxy.password));
 
     return CURLE_OK;
   }

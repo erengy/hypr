@@ -30,6 +30,12 @@ struct Options {
   bool verify_certificate = true;
 };
 
+struct Proxy {
+  std::string host;
+  std::string username;
+  std::string password;
+};
+
 class Query {
 public:
   Query() = default;

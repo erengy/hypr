@@ -24,10 +24,11 @@ public:
   }
 
   Response send(const Request& request) {
-    return detail::curl::Interface::send(request, options);
+    return detail::curl::Interface::send(request, options, proxy);
   }
 
   Options options;
+  Proxy proxy;
 
 private:
   void set_option(const Headers& headers, Request& request) {
@@ -40,6 +41,10 @@ private:
 
   void set_option(const Body& body, Request& request) {
     request.set_body(body);
+  }
+
+  void set_option(const Proxy& proxy, Request&) {
+    this->proxy = proxy;
   }
 };
 
