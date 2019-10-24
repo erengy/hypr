@@ -19,8 +19,7 @@ namespace hypr::detail {
 using Headers = std::map<std::string, std::string,
     detail::CaseInsensitiveCompare>;
 
-using Param = hypp::HeaderField;
-using Params = std::vector<Param>;
+using Param = std::pair<std::string_view, std::string_view>;
 
 class Request : public hypp::Request {
 public:
@@ -40,13 +39,13 @@ public:
   curl::Session* session = nullptr;
 };
 
-inline std::string to_string(const Params& params) {
+inline std::string to_string(const std::initializer_list<detail::Param>& params) {
   std::string str;
   for (const auto& [name, value] : params) {
     if (!str.empty()) {
       str.push_back('&');
     }
-    str += name + '=' + hypp::detail::uri::encode(value);
+    str += std::string{name} + '=' + hypp::detail::uri::encode(value);
   }
   return str;
 }
