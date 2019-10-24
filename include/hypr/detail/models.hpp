@@ -40,7 +40,7 @@ public:
   curl::Session* session = nullptr;
 };
 
-std::string to_string(const Params& params) {
+inline std::string to_string(const Params& params) {
   std::string str;
   for (const auto& [name, value] : params) {
     if (!str.empty()) {

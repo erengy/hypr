@@ -14,7 +14,7 @@ namespace hypr::detail {
   return ('a' <= c && c <= 'z') ? c - ('a' - 'A') : c;
 }
 
-[[nodiscard]] std::string to_upper_string(std::string str) {
+[[nodiscard]] inline std::string to_upper_string(std::string str) {
   std::transform(str.begin(), str.end(), str.begin(), to_upper);
   return std::move(str);
 }
