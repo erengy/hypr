@@ -32,9 +32,8 @@ public:
 
   static hypr::Response send(const hypr::Request& request,
                              const hypr::Options& options,
-                             const hypr::Proxy& proxy) {
-    Session session;
-
+                             const hypr::Proxy& proxy,
+                             Session& session) {
     hypr::detail::Response response;
     response.session = &session;
 

@@ -24,7 +24,8 @@ public:
   }
 
   Response send(const Request& request) {
-    return detail::curl::Interface::send(request, options, proxy);
+    return detail::curl::Interface::send(
+        request, options, proxy, curl_session_);
   }
 
   Options options;
@@ -46,6 +47,8 @@ private:
   void set_option(const Proxy& proxy, Request&) {
     this->proxy = proxy;
   }
+
+  detail::curl::Session curl_session_;
 };
 
 }  // namespace hypr
