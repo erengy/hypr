@@ -11,6 +11,7 @@
 #include <hypr/detail/curl_callback.hpp>
 #include <hypr/detail/curl_global.hpp>
 #include <hypr/detail/curl_session.hpp>
+#include <hypr/detail/curl_share.hpp>
 #include <hypr/detail/models.hpp>
 #include <hypr/models.hpp>
 
@@ -27,7 +28,7 @@ public:
 
   static bool init() {
     static Global global;
-    return global.init();
+    return global.init() && cache_.init(CURL_LOCK_DATA_CONNECT);
   }
 
   static hypr::Response send(const hypr::Request& request,
@@ -90,6 +91,9 @@ private:
 
     // Connection options
     HYPR_CURL_SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1024L);
+
+    // Other options
+    HYPR_CURL_SETOPT(CURLOPT_SHARE, cache_.get());
 
     return CURLE_OK;
   }
@@ -175,6 +179,8 @@ private:
       response.elapsed = std::chrono::microseconds{total};
     }
   }
+
+  static inline Share cache_;
 };
 
 #undef HYPR_CURL_CHECK_OK
