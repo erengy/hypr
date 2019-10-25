@@ -16,6 +16,8 @@
 
 namespace hypr::detail {
 
+using Error = curl::Error;
+
 using Headers = std::map<std::string, std::string,
     detail::CaseInsensitiveCompare>;
 
@@ -31,7 +33,7 @@ public:
   Response() = default;
   Response(const CURLcode code) : error{code} {}
 
-  curl::Error error;
+  Error error;
   Headers headers;
   std::chrono::microseconds elapsed{0};
   std::string url;

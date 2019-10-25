@@ -18,6 +18,7 @@
 
 namespace hypr {
 
+using Error = detail::Error;
 using Headers = detail::Headers;
 using StatusCode = hypp::status::code_t;
 using Url = hypp::Uri;
@@ -187,7 +188,7 @@ public:
     return response_.elapsed;
   }
 
-  const detail::curl::Error& error() const {
+  const Error& error() const {
     return response_.error;
   }
 
