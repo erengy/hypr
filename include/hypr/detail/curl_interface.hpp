@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <string_view>
 
@@ -27,9 +28,10 @@ public:
   Interface() = delete;
 
   static bool init() {
-    static Global global;
-    return global.init() &&
-           cache_.init(CURL_LOCK_DATA_DNS, CURL_LOCK_DATA_CONNECT);
+    global_ = std::make_unique<Global>();
+    cache_ = std::make_unique<Share>();
+    return global_ && global_->init() &&
+           cache_ && cache_->init(CURL_LOCK_DATA_DNS, CURL_LOCK_DATA_CONNECT);
   }
 
   static hypr::Response send(const hypr::Request& request,
@@ -94,7 +96,9 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1024L);
 
     // Other options
-    HYPR_CURL_SETOPT(CURLOPT_SHARE, cache_.get());
+    if (cache_) {
+      HYPR_CURL_SETOPT(CURLOPT_SHARE, cache_->get());
+    }
 
     return CURLE_OK;
   }
@@ -181,7 +185,8 @@ private:
     }
   }
 
-  static inline Share cache_;
+  static inline std::unique_ptr<Global> global_;
+  static inline std::unique_ptr<Share> cache_;
 };
 
 #undef HYPR_CURL_CHECK_OK
