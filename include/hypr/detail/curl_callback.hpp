@@ -73,8 +73,17 @@ inline size_t header_callback(char* buffer, size_t size, size_t nitems,
 
 inline int progress_callback(void* clientp,
                              curl_off_t dltotal, curl_off_t dlnow,
-                             curl_off_t ultotal, curl_off_t ulnow) {
-  // @TODO
+                             curl_off_t, curl_off_t) {
+  if (clientp && (dltotal || dlnow)) {
+    auto& response = *static_cast<hypr::detail::Response*>(clientp);
+
+    if (response.transfer.current != dlnow ||
+        response.transfer.total != dltotal) {
+      response.transfer = {dlnow, dltotal};
+      // @TODO
+    }
+  }
+
   return 0;
 }
 

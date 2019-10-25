@@ -23,6 +23,11 @@ using Headers = std::map<std::string, std::string,
 
 using Param = std::pair<std::string_view, std::string_view>;
 
+struct Transfer {
+  int64_t current = 0;
+  int64_t total = 0;
+};
+
 class Request : public hypp::Request {
 public:
   Headers headers;
@@ -35,6 +40,7 @@ public:
 
   Error error;
   Headers headers;
+  Transfer transfer;
   std::chrono::microseconds elapsed{0};
   std::string url;
 

@@ -68,7 +68,7 @@ private:
     session.setopt(CURLOPT_WRITEFUNCTION, write_callback);
     session.setopt(CURLOPT_WRITEDATA, &response);
     session.setopt(CURLOPT_XFERINFOFUNCTION, progress_callback);
-    session.setopt(CURLOPT_XFERINFODATA, nullptr);  // @TODO
+    session.setopt(CURLOPT_XFERINFODATA, &response);
     session.setopt(CURLOPT_HEADERFUNCTION, header_callback);
     session.setopt(CURLOPT_HEADERDATA, &response);
     session.setopt(CURLOPT_DEBUGFUNCTION, debug_callback);
