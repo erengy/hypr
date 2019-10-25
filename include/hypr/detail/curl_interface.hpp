@@ -85,6 +85,9 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_USERAGENT, get_default_user_agent().c_str());
     HYPR_CURL_SETOPT(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 
+    // Connection options
+    HYPR_CURL_SETOPT(CURLOPT_LOW_SPEED_LIMIT, 1024L);
+
     return CURLE_OK;
   }
 
@@ -93,12 +96,16 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_FOLLOWLOCATION, options.allow_redirects);
     HYPR_CURL_SETOPT(CURLOPT_MAXREDIRS,
         std::max(static_cast<long>(options.max_redirects), -1L));
+    HYPR_CURL_SETOPT(CURLOPT_LOW_SPEED_TIME,
+        std::max(static_cast<long>(options.timeout.count()), 0L));
     HYPR_CURL_SETOPT(CURLOPT_CONNECTTIMEOUT,
         std::max(static_cast<long>(options.timeout.count()), 0L));
     HYPR_CURL_SETOPT(CURLOPT_VERBOSE, options.verbose);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYHOST,
         options.verify_certificate ? 2L : 0L);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYPEER, options.verify_certificate);
+    HYPR_CURL_SETOPT(CURLOPT_SSL_OPTIONS,
+        options.verify_certificate ? 0L : CURLSSLOPT_NO_REVOKE);
 
     return CURLE_OK;
   }
