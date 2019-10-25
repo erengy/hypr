@@ -4,9 +4,14 @@
 
 #include <hypp/method.hpp>
 
+#include <hypr/detail/curl_interface.hpp>
 #include <hypr/session.hpp>
 
 namespace hypr {
+
+inline bool init() {
+  return detail::curl::Interface::init();
+}
 
 template <typename... Ts>
 Response request(const std::string_view method,
