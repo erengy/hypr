@@ -10,15 +10,15 @@ namespace hypr::detail::curl {
 class Share {
 public:
   // https://curl.haxx.se/libcurl/c/curl_share_init.html
-  bool init(const curl_lock_data lock_data) {
+  template <typename... Ts>
+  bool init(const Ts... lock_data) {
     if (!share_) {
       share_.reset(curl_share_init());
       if (share_) {
-        lock_data_ = lock_data;
         setopt(CURLSHOPT_LOCKFUNC, Lock);
         setopt(CURLSHOPT_UNLOCKFUNC, Unlock);
-        setopt(CURLSHOPT_SHARE, lock_data_);
         setopt(CURLSHOPT_USERDATA, &mutex_);
+        (setopt(CURLSHOPT_SHARE, lock_data), ...);
       }
     }
     return share_ != nullptr;
@@ -53,7 +53,6 @@ private:
     static_cast<std::mutex*>(userptr)->unlock();
   };
 
-  curl_lock_data lock_data_ = CURL_LOCK_DATA_CONNECT;
   std::mutex mutex_;
   std::unique_ptr<CURLSH, Deleter> share_;
 };

@@ -28,7 +28,8 @@ public:
 
   static bool init() {
     static Global global;
-    return global.init() && cache_.init(CURL_LOCK_DATA_CONNECT);
+    return global.init() &&
+           cache_.init(CURL_LOCK_DATA_DNS, CURL_LOCK_DATA_CONNECT);
   }
 
   static hypr::Response send(const hypr::Request& request,
