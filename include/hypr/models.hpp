@@ -18,10 +18,12 @@
 
 namespace hypr {
 
-using Error = detail::Error;
-using Headers = detail::Headers;
 using StatusCode = hypp::status::code_t;
 using Url = hypp::Uri;
+
+using Callbacks = detail::Callbacks;
+using Error = detail::Error;
+using Headers = detail::Headers;
 
 struct Options {
   bool allow_redirects = true;

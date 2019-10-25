@@ -31,10 +31,13 @@ public:
   }
 
   static hypr::Response send(const hypr::Request& request,
+                             const hypr::Callbacks& callbacks,
                              const hypr::Options& options,
                              const hypr::Proxy& proxy,
                              Session& session) {
     hypr::detail::Response response;
+
+    response.callbacks = callbacks;
     response.session = &session;
 
     HYPR_CURL_CHECK_OK(init() ? CURLE_OK : CURLE_FAILED_INIT);

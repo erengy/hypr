@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
@@ -28,6 +29,10 @@ struct Transfer {
   int64_t total = 0;
 };
 
+struct Callbacks {
+  std::function<void(const Transfer&)> transfer;
+};
+
 class Request : public hypp::Request {
 public:
   Headers headers;
@@ -38,6 +43,7 @@ public:
   Response() = default;
   Response(const CURLcode code) : error{code} {}
 
+  Callbacks callbacks;
   Error error;
   Headers headers;
   Transfer transfer;

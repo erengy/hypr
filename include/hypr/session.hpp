@@ -25,9 +25,10 @@ public:
 
   Response send(const Request& request) {
     return detail::curl::Interface::send(
-        request, options, proxy, curl_session_);
+        request, callbacks, options, proxy, curl_session_);
   }
 
+  Callbacks callbacks;
   Options options;
   Proxy proxy;
 

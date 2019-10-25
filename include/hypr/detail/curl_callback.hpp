@@ -80,7 +80,9 @@ inline int progress_callback(void* clientp,
     if (response.transfer.current != dlnow ||
         response.transfer.total != dltotal) {
       response.transfer = {dlnow, dltotal};
-      // @TODO
+      if (response.callbacks.transfer) {
+        response.callbacks.transfer(response.transfer);
+      }
     }
   }
 
