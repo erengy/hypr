@@ -34,17 +34,17 @@ inline size_t header_callback(char* buffer, size_t size, size_t nitems,
                               void* userdata) {
   const std::string_view line{buffer, size * nitems};
 
+  const auto parse_status_line = [&line]() {
+    hypp::Parser parser{line};
+    return hypp::ParseStatusLine(parser);
+  };
+  const auto parse_header_field = [&line]() {
+    hypp::Parser parser{line};
+    return hypp::ParseHeaderField(parser);
+  };
+
   if (userdata && !line.empty()) {
     auto& response = *static_cast<hypr::detail::Response*>(userdata);
-
-    const auto parse_status_line = [&line]() {
-      hypp::Parser parser{line};
-      return hypp::ParseStatusLine(parser);
-    };
-    const auto parse_header_field = [&line]() {
-      hypp::Parser parser{line};
-      return hypp::ParseHeaderField(parser);
-    };
 
     if (const auto expected = parse_status_line()) {
       response.start_line = std::move(expected.value());
@@ -56,11 +56,10 @@ inline size_t header_callback(char* buffer, size_t size, size_t nitems,
     } else if (line == hypp::detail::syntax::kCRLF) {
       if (response.body.empty() && response.session) {
         curl_off_t content_length = 0;
-        if (response.session->getinfo(CURLINFO_CONTENT_LENGTH_DOWNLOAD_T,
-                                      content_length) == CURLE_OK) {
-          if (content_length > 0) {
-            response.body.reserve(static_cast<size_t>(content_length));
-          }
+        const auto curl_code = response.session->getinfo(
+            CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, content_length);
+        if (curl_code == CURLE_OK && content_length > 0) {
+          response.body.reserve(static_cast<size_t>(content_length));
         }
       }
 
