@@ -11,20 +11,13 @@
 
 namespace hypr::detail::curl {
 
-inline int debug_callback(CURL* handle, curl_infotype type, char* data,
-                          size_t size, void* userptr) {
-  const std::string_view str{data, size};
-
-  switch (type) {
-    case CURLINFO_TEXT:
-    case CURLINFO_HEADER_IN:
-    case CURLINFO_HEADER_OUT:
-    case CURLINFO_DATA_IN:
-    case CURLINFO_DATA_OUT:
-    case CURLINFO_SSL_DATA_IN:
-    case CURLINFO_SSL_DATA_OUT:
-      // @TODO
-      break;
+inline int debug_callback(CURL*, curl_infotype type, char* data, size_t size,
+                          void* userptr) {
+  if (userptr) {
+    const auto& response = *static_cast<hypr::detail::Response*>(userptr);
+    if (response.callbacks.debug) {
+      response.callbacks.debug(type, std::string_view{data, size});
+    }
   }
 
   return 0;

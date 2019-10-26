@@ -83,7 +83,7 @@ private:
     session.setopt(CURLOPT_HEADERFUNCTION, header_callback);
     session.setopt(CURLOPT_HEADERDATA, &response);
     session.setopt(CURLOPT_DEBUGFUNCTION, debug_callback);
-    session.setopt(CURLOPT_DEBUGDATA, nullptr);  // @TODO
+    session.setopt(CURLOPT_DEBUGDATA, &response);
 
     // Network options
     HYPR_CURL_SETOPT(CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
