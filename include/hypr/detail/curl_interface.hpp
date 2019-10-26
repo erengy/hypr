@@ -28,8 +28,12 @@ public:
   Interface() = delete;
 
   static bool init() {
-    global_ = std::make_unique<Global>();
-    cache_ = std::make_unique<Share>();
+    if (!global_) {
+      global_ = std::make_unique<Global>();
+    }
+    if (!cache_) {
+      cache_ = std::make_unique<Share>();
+    }
     return global_ && global_->init() &&
            cache_ && cache_->init(CURL_LOCK_DATA_DNS, CURL_LOCK_DATA_CONNECT);
   }
