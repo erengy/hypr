@@ -140,25 +140,36 @@ private:
 
   static CURLcode prepare_session(const hypr::Request& request,
                                   Session& session) {
-    if (request.method() == hypp::method::kGet) {
-      HYPR_CURL_SETOPT(CURLOPT_HTTPGET, 1L);
-    } else if (request.method() == hypp::method::kPost) {
-      HYPR_CURL_SETOPT(CURLOPT_POST, 1L);
-      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDS, request.body().data());
-      HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE, request.body().size());
-    } else {
-      HYPR_CURL_SETOPT(CURLOPT_CUSTOMREQUEST, request.method().data());
-      // @TODO: Send body if appropriate
-    }
+    // Method
+    //
+    // libcurl uses this string even if we set CURLOPT_HTTPGET or CURLOPT_POST
+    // later on. Note that CURLOPT_CUSTOMREQUEST only changes the string, not
+    // how libcurl behaves.
+    HYPR_CURL_SETOPT(CURLOPT_CUSTOMREQUEST, request.method().data());
 
+    // Target
     HYPR_CURL_SETOPT(CURLOPT_URL, hypp::to_string(request.target()).c_str());
 
+    // Headers
     session.header_list.free_all();
     for (const auto& [name, value] : request.headers()) {
-      session.header_list.append(
-          !value.empty() ? name + ": " + value : name + ";");
+      session.header_list.append(!value.empty() ? name + ": " + value
+                                                : name + ";");
     }
     HYPR_CURL_SETOPT(CURLOPT_HTTPHEADER, session.header_list.get());
+
+    // Body
+    HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE_LARGE, request.body().size());
+    HYPR_CURL_SETOPT(CURLOPT_POSTFIELDS,
+        !request.body().empty() ? request.body().data() : nullptr);
+
+    // CURLOPT_POSTFIELDS automatically sets the request to HTTPREQ_POST, so
+    // we need to set the correct behavior afterwards.
+    if (!request.body().empty() || request.method() == hypp::method::kPost) {
+      HYPR_CURL_SETOPT(CURLOPT_POST, 1L);
+    } else {
+      HYPR_CURL_SETOPT(CURLOPT_HTTPGET, 1L);
+    }
 
     return CURLE_OK;
   }
