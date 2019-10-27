@@ -27,6 +27,7 @@ using Headers = detail::Headers;
 
 struct Options {
   bool allow_redirects = true;
+  bool certificate_revocation = true;
   int max_redirects = 30;
   std::chrono::seconds timeout{60};
   bool verbose = false;

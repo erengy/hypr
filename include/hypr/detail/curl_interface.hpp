@@ -121,7 +121,7 @@ private:
         options.verify_certificate ? 2L : 0L);
     HYPR_CURL_SETOPT(CURLOPT_SSL_VERIFYPEER, options.verify_certificate);
     HYPR_CURL_SETOPT(CURLOPT_SSL_OPTIONS,
-        options.verify_certificate ? 0L : CURLSSLOPT_NO_REVOKE);
+        options.certificate_revocation ? 0L : CURLSSLOPT_NO_REVOKE);
 
     return CURLE_OK;
   }
