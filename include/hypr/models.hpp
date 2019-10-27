@@ -183,7 +183,10 @@ public:
     return response_.headers;
   }
 
-  std::string_view body() const {
+  std::string& body() {
+    return response_.body;
+  }
+  const std::string& body() const {
     return response_.body;
   }
 
