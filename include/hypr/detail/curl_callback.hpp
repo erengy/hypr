@@ -74,7 +74,9 @@ inline int progress_callback(void* clientp,
         response.transfer.total != dltotal) {
       response.transfer = {dlnow, dltotal};
       if (response.callbacks.transfer) {
-        response.callbacks.transfer(response.transfer);
+        if (!response.callbacks.transfer(response.transfer)) {
+          return 1;  // abort
+        }
       }
     }
   }

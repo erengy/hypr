@@ -31,7 +31,7 @@ struct Transfer {
 
 struct Callbacks {
   std::function<void(const curl_infotype, std::string_view)> debug;
-  std::function<void(const Transfer&)> transfer;
+  std::function<bool(const Transfer&)> transfer;
 };
 
 class Request : public hypp::Request {
