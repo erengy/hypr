@@ -159,7 +159,8 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_HTTPHEADER, session.header_list.get());
 
     // Body
-    HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE_LARGE, request.body().size());
+    HYPR_CURL_SETOPT(CURLOPT_POSTFIELDSIZE_LARGE,
+        static_cast<curl_off_t>(request.body().size()));
     HYPR_CURL_SETOPT(CURLOPT_POSTFIELDS,
         !request.body().empty() ? request.body().data() : nullptr);
 
