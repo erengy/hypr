@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 
+#include <hypp/detail/uri.hpp>
 #include <hypp/parser/method.hpp>
 #include <hypp/parser/request.hpp>
 #include <hypp/header.hpp>
@@ -40,13 +41,51 @@ struct Proxy {
   std::string password;
 };
 
+struct Param {
+  std::string name;
+  std::string value;
+};
+
+class Params {
+public:
+  Params() = default;
+  Params(const std::initializer_list<Param>& params) : params_{params} {}
+
+  std::string to_string() const {
+    std::string str;
+    for (const auto& [name, value] : params_) {
+      if (!str.empty()) {
+        str.push_back('&');
+      }
+      str += name + '=' + hypp::detail::uri::encode(value);
+    }
+    return str;
+  }
+
+  void add(const std::string_view name, const std::string_view value) {
+    params_.push_back({std::string{name}, std::string{value}});
+  }
+
+  void set(const std::string_view name, const std::string_view value) {
+    for (auto& param : params_) {
+      if (param.name == name) {
+        param.value = value;
+        return;
+      }
+    }
+    add(name, value);
+  }
+
+private:
+  std::vector<Param> params_;
+};
+
 class Query {
 public:
   Query() = default;
-  Query(const std::string_view str)
-      : query_{hypp::detail::uri::encode(str)} {}
-  Query(const std::initializer_list<detail::Param>& params)
-      : query_{detail::to_string(params)} {}
+  Query(const std::string_view str) : query_{hypp::detail::uri::encode(str)} {}
+  Query(const std::initializer_list<Param>& params) : Query{Params{params}} {}
+  Query(const Params& params) : query_{params.to_string()} {}
 
   bool empty() const {
     return query_.empty();
@@ -63,10 +102,10 @@ private:
 class Body {
 public:
   Body() = default;
-  Body(const std::string_view str)
-      : body_{str}, media_type_{"text/plain"} {}
-  Body(const std::initializer_list<detail::Param>& params)
-      : body_{detail::to_string(params)},
+  Body(const std::string_view str) : body_{str}, media_type_{"text/plain"} {}
+  Body(const std::initializer_list<Param>& params) : Body{Params{params}} {}
+  Body(const Params& params)
+      : body_{params.to_string()},
         media_type_{"application/x-www-form-urlencoded"} {}
 
   std::string_view media_type() const {

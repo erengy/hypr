@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <curl/curl.h>
-#include <hypp/detail/uri.hpp>
 #include <hypp/header.hpp>
 #include <hypp/response.hpp>
 
@@ -21,8 +20,6 @@ using Error = curl::Error;
 
 using Headers = std::map<std::string, std::string,
     detail::CaseInsensitiveCompare>;
-
-using Param = std::pair<std::string_view, std::string_view>;
 
 struct Transfer {
   int64_t current = 0;
@@ -53,16 +50,5 @@ public:
 
   curl::Session* session = nullptr;
 };
-
-inline std::string to_string(const std::initializer_list<detail::Param>& params) {
-  std::string str;
-  for (const auto& [name, value] : params) {
-    if (!str.empty()) {
-      str.push_back('&');
-    }
-    str += std::string{name} + '=' + hypp::detail::uri::encode(value);
-  }
-  return str;
-}
 
 }  // namespace hypr::detail
