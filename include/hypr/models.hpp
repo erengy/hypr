@@ -205,7 +205,9 @@ public:
   StatusCode status_code() const {
     return response_.start_line.code;
   }
-
+  StatusCode status_class() const {
+    return hypp::status::to_class(response_.start_line.code);
+  }
   std::string_view reason_phrase() const {
     return hypp::status::to_phrase(response_.start_line.code);
   }
