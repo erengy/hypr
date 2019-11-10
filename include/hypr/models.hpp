@@ -91,7 +91,7 @@ public:
     return query_.empty();
   }
 
-  std::string_view to_string() const {
+  std::string to_string() const {
     return query_;
   }
 
@@ -108,11 +108,11 @@ public:
       : body_{params.to_string()},
         media_type_{"application/x-www-form-urlencoded"} {}
 
-  std::string_view media_type() const {
+  std::string media_type() const {
     return media_type_;
   }
 
-  std::string_view to_string() const {
+  std::string to_string() const {
     return body_;
   }
 
@@ -127,7 +127,7 @@ public:
     request_.start_line.method = hypp::method::kGet;
   }
 
-  const std::string_view method() const {
+  std::string method() const {
     return request_.start_line.method;
   }
   bool set_method(const std::string_view method) {
@@ -162,9 +162,9 @@ public:
     }
   }
 
-  std::string_view header(const std::string_view name) const {
+  std::string header(const std::string_view name) const {
     const auto it = request_.headers.find(std::string{name});
-    return it != request_.headers.end() ? it->second : std::string_view{};
+    return it != request_.headers.end() ? it->second : std::string{};
   }
   const Headers& headers() const {
     return request_.headers;
@@ -183,7 +183,7 @@ public:
     request_.headers = headers;
   }
 
-  const std::string_view body() const {
+  const std::string& body() const {
     return request_.body;
   }
   void set_body(const Body& body) {
@@ -208,17 +208,17 @@ public:
   StatusCode status_class() const {
     return hypp::status::to_class(response_.start_line.code);
   }
-  std::string_view reason_phrase() const {
-    return hypp::status::to_phrase(response_.start_line.code);
+  std::string reason_phrase() const {
+    return std::string{hypp::status::to_phrase(response_.start_line.code)};
   }
 
-  std::string_view url() const {
+  std::string url() const {
     return response_.url;
   }
 
-  std::string_view header(const std::string_view name) const {
+  std::string header(const std::string_view name) const {
     const auto it = response_.headers.find(std::string{name});
-    return it != response_.headers.end() ? it->second : std::string_view{};
+    return it != response_.headers.end() ? it->second : std::string{};
   }
   const Headers& headers() const {
     return response_.headers;
