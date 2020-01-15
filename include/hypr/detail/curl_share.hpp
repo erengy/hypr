@@ -3,6 +3,7 @@
 #include <memory>
 #include <mutex>
 #include <type_traits>
+#include <unordered_map>
 
 #include <curl/curl.h>
 
@@ -18,9 +19,10 @@ public:
     if (!share_) {
       share_.reset(curl_share_init());
       if (share_) {
+        (locks_[lock_data], ...);
         setopt(CURLSHOPT_LOCKFUNC, Lock);
         setopt(CURLSHOPT_UNLOCKFUNC, Unlock);
-        setopt(CURLSHOPT_USERDATA, &mutex_);
+        setopt(CURLSHOPT_USERDATA, &locks_);
         (setopt(CURLSHOPT_SHARE, lock_data), ...);
       }
     }
@@ -49,14 +51,19 @@ private:
     }
   };
 
-  static void Lock(CURL*, curl_lock_data, curl_lock_access, void* userptr) {
-    static_cast<std::mutex*>(userptr)->lock();
+  using locks_t = std::unordered_map<curl_lock_data, std::mutex>;
+
+  static void Lock(CURL*, curl_lock_data lock_data, curl_lock_access,
+                   void* userptr) {
+    auto& locks = *static_cast<locks_t*>(userptr);
+    locks[lock_data].lock();
   };
-  static void Unlock(CURL*, curl_lock_data, void* userptr) {
-    static_cast<std::mutex*>(userptr)->unlock();
+  static void Unlock(CURL*, curl_lock_data lock_data, void* userptr) {
+    auto& locks = *static_cast<locks_t*>(userptr);
+    locks[lock_data].unlock();
   };
 
-  std::mutex mutex_;
+  locks_t locks_;
   std::unique_ptr<CURLSH, Deleter> share_;
 };
 
