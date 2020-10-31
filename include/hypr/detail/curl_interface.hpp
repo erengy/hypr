@@ -94,6 +94,7 @@ private:
     HYPR_CURL_SETOPT(CURLOPT_ACCEPT_ENCODING, "");
 #endif
     HYPR_CURL_SETOPT(CURLOPT_USERAGENT, get_default_user_agent().c_str());
+    HYPR_CURL_SETOPT(CURLOPT_COOKIEFILE, "");
     HYPR_CURL_SETOPT(CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 
     // Connection options
