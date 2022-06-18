@@ -14,7 +14,7 @@ public:
   // https://curl.haxx.se/libcurl/c/curl_share_init.html
   template <typename... Ts>
   bool init(const Ts... lock_data) {
-    static_assert(sizeof...(Ts));
+    static_assert(static_cast<bool>(sizeof...(Ts)));
     static_assert((std::is_same_v<curl_lock_data, Ts> && ...));
     if (!share_) {
       share_.reset(curl_share_init());
